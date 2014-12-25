@@ -79,11 +79,21 @@ func (c Client) Get(r Resource, d interface{}) error {
 
 // GetResp calls a resource and returns the raw response
 func (c Client) GetResp(r Resource) (*http.Response, error) {
+	req, err := NewRequest(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Do(req)
+}
+
+// NewRequest prepares a request from a resource
+func NewRequest(r Resource) (*http.Request, error) {
 	u := URL(r.Path())
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Do(req)
+	return req, nil
 }

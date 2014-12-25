@@ -44,3 +44,21 @@ func TestAPIAuthorizesRequest(t *testing.T) {
 	r := reqs[0]
 	assert.Equal(t, "Basic MTIzNDU=", r.Header.Get("Authorization"))
 }
+
+type resource struct{}
+
+func (r resource) Path() string {
+	return "/foo/bar"
+}
+
+func TestBuildRequest(t *testing.T) {
+	req, err := NewRequest(&resource{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	u := req.URL
+	assert.Equal(t, "https", u.Scheme)
+	assert.Equal(t, "wakatime.com", u.Host)
+	assert.Equal(t, "/foo/bar", u.Path)
+}
