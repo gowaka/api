@@ -90,6 +90,10 @@ func (c Client) GetResp(r Resource) (*http.Response, error) {
 // NewRequest prepares a request from a resource
 func NewRequest(r Resource) (*http.Request, error) {
 	u := URL(r.Path())
+	if q := r.Filter(); q != nil {
+		u.RawQuery = q.Encode()
+	}
+
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err

@@ -5,6 +5,7 @@ import (
 	"gopkg.in/nowk/assert.v2"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -51,6 +52,12 @@ func (r resource) Path() string {
 	return "/foo/bar"
 }
 
+func (r resource) Filter() *url.Values {
+	return &url.Values{
+		"baz": {"qux"},
+	}
+}
+
 func TestBuildRequest(t *testing.T) {
 	req, err := NewRequest(&resource{})
 	if err != nil {
@@ -61,4 +68,7 @@ func TestBuildRequest(t *testing.T) {
 	assert.Equal(t, "https", u.Scheme)
 	assert.Equal(t, "wakatime.com", u.Host)
 	assert.Equal(t, "/foo/bar", u.Path)
+
+	v := u.Query()
+	assert.Equal(t, "qux", v.Get("baz"))
 }
